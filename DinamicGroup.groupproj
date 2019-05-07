@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{88C778E0-A9C8-4E38-8D17-012269031118}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Dinamic.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="ProjetoTest\ProjetoTest.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="Dinamic">
+        <MSBuild Projects="Dinamic.dproj"/>
+    </Target>
+    <Target Name="Dinamic:Clean">
+        <MSBuild Projects="Dinamic.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Dinamic:Make">
+        <MSBuild Projects="Dinamic.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ProjetoTest">
+        <MSBuild Projects="ProjetoTest\ProjetoTest.dproj"/>
+    </Target>
+    <Target Name="ProjetoTest:Clean">
+        <MSBuild Projects="ProjetoTest\ProjetoTest.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ProjetoTest:Make">
+        <MSBuild Projects="ProjetoTest\ProjetoTest.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="Dinamic;ProjetoTest"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="Dinamic:Clean;ProjetoTest:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="Dinamic:Make;ProjetoTest:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
