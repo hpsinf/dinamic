@@ -88,4 +88,5 @@ procedure TForm2.FormCreate(Sender: TObject);
 begin
   Dinamic.Config;
 end;
+
 end.
