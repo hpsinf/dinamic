@@ -10,7 +10,9 @@ uses
   REST.Response.Adapter, Vcl.Grids, Vcl.DBGrids, UDinamic, Vcl.StdCtrls,
   Vcl.ExtCtrls,
 
-  uJson, Helper, Vcl.ComCtrls;
+  uJson, Helper, Vcl.ComCtrls, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
+  FireDAC.DApt.Intf, FireDAC.Comp.DataSet, FireDAC.Comp.Client;
 
 type
   TForm2 = class(TForm)
@@ -53,8 +55,9 @@ procedure TForm2.Button2Click(Sender: TObject);
 var
   cds: RClientDataSet;
 begin
-  cds := Dinamic.Request('iris/pacientes',
-    '?nome='+Edit1.Text+'&genero=Masculino&data_nascimento='+FormatDateTime('DD-MM-YYYY',Now), POST);
+  cds := Dinamic.Request('iris/pacientes', '?nome=' + Edit1.Text +
+    '&genero=Masculino&data_nascimento=' + FormatDateTime('DD-MM-YYYY',
+    Now), POST);
   DataSource2.DataSet := cds.CDSet;
   Label1.Caption := 'Status Code: ' + IntToStr(cds.StatusCode);
   Button1.Click;
@@ -74,13 +77,31 @@ end;
 procedure TForm2.Button4Click(Sender: TObject);
 var
   cds: RClientDataSet;
-  id: string;
+  id, json: string;
+  mem: TFDMemTable;
 begin
+//-------------------------------------------------------
+  mem := TFDMemTable.Create(Self);
+  mem.FieldDefs.Clear;
+  mem.FieldDefs.Add('nome', ftString, 50);
+  mem.CreateDataSet;
+
+  mem.Open;
+  mem.Edit;
+  mem.FieldByName('nome').Value := Edit1.Text;
+  mem.POST;
+
+  json := mem.ToJson();
+
+  mem.Free;
+  json := StringReplace(json, '[', '', [rfReplaceAll]);
+  json := StringReplace(json, ']', '', [rfReplaceAll]);
+//-------------------------------------------------------
+
   id := DataSource2.DataSet.FieldByName('_id').AsVariant;
-  cds := Dinamic.Request('iris/pacientes/?id=' + id,
-    '{'+
-    '"nome": "' + Edit1.Text + '"}', PATCH);
+  cds := Dinamic.Request('iris/pacientes/?id=' + id, json, PATCH);
   Label1.Caption := 'Status Code: ' + IntToStr(cds.StatusCode);
+
   Button1.Click;
 end;
 

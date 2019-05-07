@@ -97,38 +97,40 @@ end;
 class function Dinamic.Request(recurso, body: string; Metodo: Metodo)
   : RClientDataSet;
 begin
-  RESTClient.BaseURL := BaseURL + recurso + body;
+  RESTClient.BaseURL := BaseURL + recurso;
   RESTRequest.ClearBody;
+  RESTRequest.AddBody(body, ctAPPLICATION_JSON);
   case Metodo of
     GET:
       begin
         RESTRequest.Method := rmGET;
+        if body <> EmptyStr then
+          RESTRequest.AddBody(body, ctAPPLICATION_JSON)
+        else
+          RESTRequest.ClearBody;
       end;
     POST:
       begin
-        RESTClient.BaseURL := BaseURL + recurso + '/cadastrar/' + body;
+        RESTClient.BaseURL := BaseURL + recurso + '/cadastrar/';
         RESTRequest.Method := rmPOST;
-        // RESTRequest.AddBody(parametros, ctAPPLICATION_JSON);
       end;
     PATCH:
       begin
-        RESTClient.BaseURL := BaseURL + recurso;
         RESTRequest.Method := rmPATCH;
-        RESTRequest.AddBody(body, ctAPPLICATION_JSON);
       end;
     DELETE:
       begin
-        RESTClient.BaseURL := BaseURL + recurso + body;
         RESTRequest.Method := rmDELETE;
-        // RESTRequest.AddBody(body, ctAPPLICATION_JSON);
       end;
   end;
 
   RESTRequest.Execute;
+
   Result.StatusCode := RESTResponse.StatusCode;
   Result.CDSet := ClientDataSet;
   Result.Indice := 0;
 
 end;
+
 
 end.
