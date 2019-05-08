@@ -4,16 +4,18 @@ interface
 
 uses System.Classes, System.Variants, System.SysUtils, REST.Types, REST.Client,
   Data.Bind.Components, Data.Bind.ObjectScope, Data.DB, Datasnap.DBClient,
-  REST.Response.Adapter;
+  REST.Response.Adapter, System.JSON;
 
 type
-  Metodo = (GET, POST, PATCH, DELETE);
+  Metodo = (mGET, mPOST, mPATCH, mDELETE);
 
 type
   RClientDataSet = record
     Indice: Integer;
     CDSet: TClientDataSet;
     StatusCode: Integer;
+    mensagem: String;
+    erro: string;
   end;
 
 type
@@ -31,17 +33,17 @@ type
     class procedure Config;
 
     class function Request(recurso, body: string; Metodo: Metodo)
-      : RClientDataSet; overload;
+      : RClientDataSet;
 
-    class function Request(recurso: string; Metodo: Metodo)
-      : RClientDataSet; overload;
 
     class function Dataset: TClientDataSet;
+
+    class procedure JsonToDataset(aDataset: TDataSet; aJSON: string);
 
   end;
 
 var
-  cds: array of TClientDataSet;
+  RCDS: array of RClientDataSet;
 
 implementation
 
@@ -72,65 +74,78 @@ begin
   Result := ClientDataSet;
 end;
 
-class function Dinamic.Request(recurso: string; Metodo: Metodo): RClientDataSet;
-begin
-
-  RESTClient.BaseURL := BaseURL + recurso;
-  case Metodo of
-    GET:
-      RESTRequest.Method := rmGET;
-    POST:
-      RESTRequest.Method := rmPOST;
-    PATCH:
-      RESTRequest.Method := rmPATCH;
-    DELETE:
-      RESTRequest.Method := rmDELETE;
-  end;
-
-  RESTRequest.Execute;
-  Result.StatusCode := RESTResponse.StatusCode;
-  Result.CDSet := ClientDataSet;
-  Result.Indice := 0;
-
-end;
-
 class function Dinamic.Request(recurso, body: string; Metodo: Metodo)
   : RClientDataSet;
+var
+  rcds: RClientDataSet;
 begin
   RESTClient.BaseURL := BaseURL + recurso;
   RESTRequest.ClearBody;
   RESTRequest.AddBody(body, ctAPPLICATION_JSON);
   case Metodo of
-    GET:
+    mGET:
       begin
         RESTRequest.Method := rmGET;
-        if body <> EmptyStr then
+        if body <> '{"RowId":1,"id":"0"}' then
           RESTRequest.AddBody(body, ctAPPLICATION_JSON)
         else
           RESTRequest.ClearBody;
       end;
-    POST:
+    mPOST:
       begin
         RESTClient.BaseURL := BaseURL + recurso + '/cadastrar/';
         RESTRequest.Method := rmPOST;
       end;
-    PATCH:
+    mPATCH:
       begin
         RESTRequest.Method := rmPATCH;
       end;
-    DELETE:
+    mDELETE:
       begin
         RESTRequest.Method := rmDELETE;
       end;
   end;
 
-  RESTRequest.Execute;
+  try
+{    RESTRequest.ExecuteAsync(
+      procedure
+      begin
+        rcds.StatusCode := RESTResponse.StatusCode;
+        rcds.Indice := 0;
+        // rcds.CDSet := ClientDataSet;
 
-  Result.StatusCode := RESTResponse.StatusCode;
-  Result.CDSet := ClientDataSet;
-  Result.Indice := 0;
+      end, true, true);
+ }
+     RESTRequest.Execute;
+  finally
+    rcds.StatusCode := RESTResponse.StatusCode;
+    rcds.Indice := 0;
+    rcds.CDSet := ClientDataSet;
+    Result := rcds;
+  end;
 
 end;
 
+class procedure Dinamic.JsonToDataset(aDataset: TDataSet; aJSON: string);
+var
+  JObj: TJSONArray;
+  vConv: TCustomJSONDataSetAdapter;
+begin
+  if (aJSON = EmptyStr) then
+  begin
+    Exit;
+  end;
+
+  JObj := TJSONObject.ParseJSONValue(aJSON) as TJSONArray;
+  vConv := TCustomJSONDataSetAdapter.Create(Nil);
+
+  try
+    vConv.Dataset := aDataset;
+    vConv.UpdateDataSet(JObj);
+  finally
+    vConv.Free;
+    JObj.Free;
+  end;
+end;
 
 end.

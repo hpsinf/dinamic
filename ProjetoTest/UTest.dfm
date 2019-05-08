@@ -4,8 +4,8 @@ object Form2: TForm2
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Form2'
-  ClientHeight = 465
-  ClientWidth = 375
+  ClientHeight = 336
+  ClientWidth = 571
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -15,13 +15,13 @@ object Form2: TForm2
   OldCreateOrder = False
   OnCreate = FormCreate
   DesignSize = (
-    375
-    465)
+    571
+    336)
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
-    Left = 159
-    Top = 8
+    Left = 201
+    Top = 142
     Width = 104
     Height = 19
     Anchors = [akTop, akRight]
@@ -32,7 +32,6 @@ object Form2: TForm2
     Font.Name = 'Tahoma'
     Font.Style = [fsBold]
     ParentFont = False
-    ExplicitLeft = 120
   end
   object Button1: TButton
     Left = 8
@@ -45,9 +44,9 @@ object Form2: TForm2
   end
   object DBGrid2: TDBGrid
     Left = 0
-    Top = 141
-    Width = 375
-    Height = 324
+    Top = 167
+    Width = 571
+    Height = 169
     Align = alBottom
     DataSource = DataSource2
     Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
@@ -74,15 +73,16 @@ object Form2: TForm2
       end
       item
         Expanded = False
-        FieldName = 'data_nascimento'
-        Title.Caption = 'Data Nascimento'
-        Width = 138
+        FieldName = 'status'
+        Title.Caption = 'Status'
+        Width = 48
         Visible = True
       end
       item
         Expanded = False
-        FieldName = 'status'
-        Title.Caption = 'Status'
+        FieldName = 'data_nascimento'
+        Title.Caption = 'Data Nascimento'
+        Width = 99
         Visible = True
       end>
   end
@@ -105,8 +105,8 @@ object Form2: TForm2
     OnClick = Button3Click
   end
   object Button4: TButton
-    Left = 223
-    Top = 76
+    Left = 120
+    Top = 120
     Width = 75
     Height = 41
     Caption = 'Update'
@@ -123,8 +123,25 @@ object Form2: TForm2
     EditLabel.Caption = 'Nome'
     TabOrder = 5
   end
+  object DBGrid1: TDBGrid
+    Left = 128
+    Top = 33
+    Width = 441
+    Height = 37
+    DataSource = DataSource1
+    TabOrder = 6
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -11
+    TitleFont.Name = 'Tahoma'
+    TitleFont.Style = []
+  end
   object DataSource2: TDataSource
     Left = 24
     Top = 184
+  end
+  object DataSource1: TDataSource
+    Left = 72
+    Top = 8
   end
 end
