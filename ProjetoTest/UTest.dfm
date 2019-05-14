@@ -136,12 +136,20 @@ object Form2: TForm2
     TitleFont.Name = 'Tahoma'
     TitleFont.Style = []
   end
+  object Button5: TButton
+    Left = 488
+    Top = 136
+    Width = 75
+    Height = 25
+    Caption = 'Ativar'
+    TabOrder = 7
+    OnClick = Button5Click
+  end
   object DataSource2: TDataSource
     Left = 24
-    Top = 184
+    Top = 8
   end
   object DataSource1: TDataSource
-    Left = 72
-    Top = 8
+    Left = 136
   end
 end

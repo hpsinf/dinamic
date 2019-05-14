@@ -35,7 +35,6 @@ type
     class function Request(recurso, body: string; Metodo: Metodo)
       : RClientDataSet;
 
-
     class function Dataset: TClientDataSet;
 
     class procedure JsonToDataset(aDataset: TDataSet; aJSON: string);
@@ -77,7 +76,7 @@ end;
 class function Dinamic.Request(recurso, body: string; Metodo: Metodo)
   : RClientDataSet;
 var
-  rcds: RClientDataSet;
+  RCDS: RClientDataSet;
 begin
   RESTClient.BaseURL := BaseURL + recurso;
   RESTRequest.ClearBody;
@@ -93,7 +92,6 @@ begin
       end;
     mPOST:
       begin
-        RESTClient.BaseURL := BaseURL + recurso + '/cadastrar/';
         RESTRequest.Method := rmPOST;
       end;
     mPATCH:
@@ -107,21 +105,21 @@ begin
   end;
 
   try
-{    RESTRequest.ExecuteAsync(
+    { RESTRequest.ExecuteAsync(
       procedure
       begin
-        rcds.StatusCode := RESTResponse.StatusCode;
-        rcds.Indice := 0;
-        // rcds.CDSet := ClientDataSet;
+      rcds.StatusCode := RESTResponse.StatusCode;
+      rcds.Indice := 0;
+      // rcds.CDSet := ClientDataSet;
 
       end, true, true);
- }
-     RESTRequest.Execute;
+    }
+    RESTRequest.Execute;
   finally
-    rcds.StatusCode := RESTResponse.StatusCode;
-    rcds.Indice := 0;
-    rcds.CDSet := ClientDataSet;
-    Result := rcds;
+    RCDS.StatusCode := RESTResponse.StatusCode;
+    RCDS.Indice := 0;
+    RCDS.CDSet := ClientDataSet;
+    Result := RCDS;
   end;
 
 end;
