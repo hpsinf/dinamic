@@ -1,3 +1,6 @@
+//DINAMEDIC
+//DINAMED
+
 unit UTest;
 
 interface
